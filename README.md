@@ -1,7 +1,8 @@
 jetcd: A Java client for etcd
 =============================
 
-h2. Download
+Download
+--------
 
     <dependency>
       <groupId>net.floatingsun</groupId>
@@ -9,7 +10,8 @@ h2. Download
       <version>0.1.0</version>
     </dependency>
 
-h2. Usage
+Usage
+-----
 
     // Connects to "http://127.0.0.1:4001" by default
     EtcdClient client = EtcdClientFactory.newInstance();
@@ -20,9 +22,9 @@ h2. Usage
     client.deleteKey("hello")
 
 TODO
+----
 
-- multiple servers with redirect
-- retries and better failure handling
-- better unification of 'getKey' and 'list'
-- support for watch
-- 
+* multiple servers with redirect
+* retries and better failure handling
+* better unification of 'getKey' and 'list'
+* support for watch
