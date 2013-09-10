@@ -16,6 +16,7 @@
 
 package jetcd;
 
+import org.junit.Before;
 import org.junit.Test;
 import retrofit.RestAdapter;
 
@@ -23,6 +24,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 public class EtcdApiTest {
     private static final EtcdApi etcd;
@@ -31,6 +33,17 @@ public class EtcdApiTest {
             .setServer("http://127.0.0.1:4001")
             .build();
         etcd = restAdapter.create(EtcdApi.class);
+    }
+    private boolean localEtcdAvailable = true;
+
+    @Before
+    public void setUp() {
+        try {
+            etcd.setKey("foo", "bar");
+        } catch (Exception e) {
+            localEtcdAvailable = false;
+        }
+        assumeTrue(localEtcdAvailable);
     }
 
     @Test
