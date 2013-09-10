@@ -1,6 +1,8 @@
 jetcd: A Java client for etcd
 =============================
 
+[![Build Status](https://travis-ci.org/diwakergupta/jetcd.png)](https://travis-ci.org/diwakergupta/jetcd)
+
 Download
 --------
 
