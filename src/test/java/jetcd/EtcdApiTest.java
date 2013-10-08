@@ -39,7 +39,7 @@ public class EtcdApiTest {
     @Before
     public void setUp() {
         try {
-            etcd.setKey("foo", "bar");
+            etcd.set("DO_NOT_USE_THIS_KEY", "DUMMY_VALUE");
         } catch (Exception e) {
             localEtcdAvailable = false;
         }
@@ -51,27 +51,27 @@ public class EtcdApiTest {
         final String value = "Hello World!";
 
         // Set a key
-        Response response = etcd.setKey("message", value);
+        Response response = etcd.set("message", value);
         assertThat(response.value).isEqualTo(value);
 
         // Verify value
-        response = etcd.getKey("message");
+        response = etcd.get("message");
         assertThat(response.value).isEqualTo(value);
 
         // Delete the key
-        response = etcd.deleteKey("message");
+        response = etcd.delete("message");
         assertThat(response.prevValue).isEqualTo(value);
 
         // Create multiple keys
-        etcd.setKey("foo/bar", "Bar");
-        etcd.setKey("foo/baz", "Baz");
+        etcd.set("foo/bar", "Bar");
+        etcd.set("foo/baz", "Baz");
 
         // List directory
         List<Response> entries = etcd.list("foo");
         assertThat(entries).hasSize(2);
 
         // Test and Set
-        etcd.setKey("message", value);
+        etcd.set("message", value);
         try {
             etcd.testAndSet("message", "bad-old", "new");
             fail();
