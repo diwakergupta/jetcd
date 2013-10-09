@@ -27,14 +27,14 @@ import java.util.List;
 
 public interface EtcdApi {
     @GET("/v1/keys/{key}")
-    Response getKey(@Path("key") String key);
+    Response get(@Path("key") String key);
 
     @FormUrlEncoded
     @POST("/v1/keys/{key}")
-    Response setKey(@Path("key") String key, @Field("value") String value);
+    Response set(@Path("key") String key, @Field("value") String value);
 
     @DELETE("/v1/keys/{key}")
-    Response deleteKey(@Path("key") String key);
+    Response delete(@Path("key") String key);
 
     @GET("/v1/keys/{key}/")
     List<Response> list(@Path("key") String key);

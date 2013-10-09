@@ -31,7 +31,7 @@ public class EtcdClientTest {
     public void setUp() throws EtcdException {
         // Setup some keys
         try {
-            client.setKey("hello", "world");
+            client.set("hello", "world");
         } catch (Exception e) {
             localEtcdAvailable = false;
         }
@@ -40,9 +40,9 @@ public class EtcdClientTest {
 
     @Test
     public void testGet() throws EtcdException {
-        client.getKey("hello");
+        client.get("hello");
         try {
-            client.getKey("non-existent");
+            client.get("non-existent");
             fail();
         } catch (EtcdException e) {
             assertThat(e.getErrorCode()).isEqualTo(100);
@@ -51,26 +51,26 @@ public class EtcdClientTest {
 
     @Test
     public void testSet() throws EtcdException {
-        client.setKey("newKey", "newValue");
-        assertThat(client.getKey("newKey")).isEqualTo("newValue");
+        client.set("newKey", "newValue");
+        assertThat(client.get("newKey")).isEqualTo("newValue");
 
         // Set a pre-existing key
-        client.setKey("hello", "newValue");
-        assertThat(client.getKey("hello")).isEqualTo("newValue");
+        client.set("hello", "newValue");
+        assertThat(client.get("hello")).isEqualTo("newValue");
     }
 
     @Test
     public void testDelete() throws EtcdException {
-        client.deleteKey("hello");
+        client.delete("hello");
         try {
-            client.getKey("hello");
+            client.get("hello");
             fail();
         } catch (EtcdException e) {
             assertThat(e.getErrorCode()).isEqualTo(100);
         }
 
         try {
-            client.deleteKey("non-existent");
+            client.delete("non-existent");
             fail();
         } catch (EtcdException e) {
             assertThat(e.getErrorCode()).isEqualTo(100);
@@ -79,8 +79,8 @@ public class EtcdClientTest {
 
     @Test
     public void testList() throws EtcdException {
-        client.setKey("b/bar", "baz");
-        client.setKey("b/foo", "baz");
+        client.set("b/bar", "baz");
+        client.set("b/foo", "baz");
         assertThat(client.list("b")).hasSize(2)
             .containsEntry("/b/bar", "baz").containsEntry("/b/foo", "baz");
     }
@@ -89,7 +89,7 @@ public class EtcdClientTest {
     public void testGetAndSet() throws EtcdException {
         String oldValue = client.testAndSet("hello", "world", "new value");
         assertThat(oldValue).isEqualTo("world");
-        assertThat(client.getKey("hello")).isEqualTo("new value");
+        assertThat(client.get("hello")).isEqualTo("new value");
 
         try {
             client.testAndSet("hello", "bad old", "world");

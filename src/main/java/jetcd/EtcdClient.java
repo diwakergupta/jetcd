@@ -26,7 +26,7 @@ public interface EtcdClient {
      * @return value Value for the given key
      * @throws EtcdException in case of an error (e.g. key doesn't exist)
      */
-    String getKey(String key) throws EtcdException;
+    String get(String key) throws EtcdException;
 
     /**
      * Set value for the given key.
@@ -35,7 +35,7 @@ public interface EtcdClient {
      * @param value New value for the key
      * @throws EtcdException in case of an error
      */
-    void setKey(String key, String value) throws EtcdException;
+    void set(String key, String value) throws EtcdException;
 
     /**
      * Delete value for the given key.
@@ -43,7 +43,7 @@ public interface EtcdClient {
      * @param key Key to delete value for
      * @throws EtcdException in case of an error
      */
-    void deleteKey(String key) throws EtcdException;
+    void delete(String key) throws EtcdException;
 
     /**
      * List directory at given path.
@@ -53,6 +53,17 @@ public interface EtcdClient {
      * @throws EtcdException in case of an error
      */
     Map<String, String> list(String path) throws EtcdException;
+
+    /**
+     * Test the value at a given key and update to newValue if the oldValue
+     * matches.
+     *
+     * @param key Key to test/set value at
+     * @param oldValue Old value
+     * @param newValue New value
+     * @return The previous value
+     * @throws EtcdException in case of an error
+     */
     String testAndSet(String key, String oldValue, String newValue)
         throws EtcdException;
 }

@@ -33,27 +33,27 @@ public class EtcdClientImpl implements EtcdClient {
     }
 
     @Override
-    public String getKey(String key) throws EtcdException {
+    public String get(String key) throws EtcdException {
         try {
-            return etcd.getKey(key).value;
+            return etcd.get(key).value;
         } catch (RetrofitError e) {
             throw new EtcdException(e);
         }
     }
 
     @Override
-    public void setKey(String key, String value) throws EtcdException {
+    public void set(String key, String value) throws EtcdException {
         try {
-            etcd.setKey(key, value);
+            etcd.set(key, value);
         } catch (RetrofitError e) {
             throw new EtcdException(e);
         }
     }
 
     @Override
-    public void deleteKey(String key) throws EtcdException {
+    public void delete(String key) throws EtcdException {
         try {
-            etcd.deleteKey(key);
+            etcd.delete(key);
         } catch (RetrofitError e) {
             throw new EtcdException(e);
         }
