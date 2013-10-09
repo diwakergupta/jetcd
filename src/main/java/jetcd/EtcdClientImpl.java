@@ -16,10 +16,11 @@
 
 package jetcd;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class EtcdClientImpl implements EtcdClient {
@@ -34,6 +35,7 @@ public class EtcdClientImpl implements EtcdClient {
 
     @Override
     public String get(String key) throws EtcdException {
+        Preconditions.checkNotNull(key);
         try {
             return etcd.get(key).value;
         } catch (RetrofitError e) {
@@ -43,6 +45,8 @@ public class EtcdClientImpl implements EtcdClient {
 
     @Override
     public void set(String key, String value) throws EtcdException {
+        Preconditions.checkNotNull(key);
+        Preconditions.checkNotNull(value);
         try {
             etcd.set(key, value);
         } catch (RetrofitError e) {
@@ -52,6 +56,7 @@ public class EtcdClientImpl implements EtcdClient {
 
     @Override
     public void delete(String key) throws EtcdException {
+        Preconditions.checkNotNull(key);
         try {
             etcd.delete(key);
         } catch (RetrofitError e) {
@@ -61,20 +66,25 @@ public class EtcdClientImpl implements EtcdClient {
 
     @Override
     public Map<String, String> list(String path) throws EtcdException {
-        Map<String, String> entries = new HashMap<>();
+        Preconditions.checkNotNull(path);
+        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
         try {
             for (Response response : etcd.list(path)) {
-                entries.put(response.key, response.value);
+                builder.put(response.key, response.value);
             }
         } catch (RetrofitError e) {
             throw new EtcdException(e);
         }
-        return entries;
+        return builder.build();
     }
 
     @Override
     public String testAndSet(String key, String oldValue, String newValue)
             throws EtcdException {
+        Preconditions.checkNotNull(key);
+        Preconditions.checkNotNull(oldValue);
+        Preconditions.checkNotNull(newValue);
+        Preconditions.checkArgument(!oldValue.equals(newValue));
         try {
             Response response = etcd.testAndSet(key, oldValue, newValue);
             return response.prevValue;
