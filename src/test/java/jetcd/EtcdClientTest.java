@@ -60,6 +60,21 @@ public class EtcdClientTest {
     }
 
     @Test
+    public void testSetWithTtl() throws Exception {
+        client.set("newKey", "newValue", 1);
+        assertThat(client.get("newKey")).isEqualTo("newValue");
+
+        // Wait for key to expire
+        Thread.sleep(1200);
+        try {
+            client.get("newKey");
+            fail();
+        } catch (EtcdException e) {
+            assertThat(e.getErrorCode()).isEqualTo(100);
+        }
+    }
+
+    @Test
     public void testDelete() throws EtcdException {
         client.delete("hello");
         try {

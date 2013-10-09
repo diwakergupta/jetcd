@@ -48,7 +48,18 @@ public class EtcdClientImpl implements EtcdClient {
         Preconditions.checkNotNull(key);
         Preconditions.checkNotNull(value);
         try {
-            etcd.set(key, value);
+            etcd.set(key, value, /*ttl=*/ null);
+        } catch (RetrofitError e) {
+            throw new EtcdException(e);
+        }
+    }
+
+    @Override
+    public void set(String key, String value, int ttl) throws EtcdException {
+        Preconditions.checkNotNull(key);
+        Preconditions.checkNotNull(value);
+        try {
+            etcd.set(key, value, ttl);
         } catch (RetrofitError e) {
             throw new EtcdException(e);
         }

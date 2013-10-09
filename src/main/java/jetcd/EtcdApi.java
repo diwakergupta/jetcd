@@ -31,7 +31,8 @@ public interface EtcdApi {
 
     @FormUrlEncoded
     @POST("/v1/keys/{key}")
-    Response set(@Path("key") String key, @Field("value") String value);
+    Response set(@Path("key") String key, @Field("value") String value,
+        @Field("ttl") Integer ttl);
 
     @DELETE("/v1/keys/{key}")
     Response delete(@Path("key") String key);
