@@ -38,6 +38,16 @@ public interface EtcdClient {
     void set(String key, String value) throws EtcdException;
 
     /**
+     * Set value for the given key with given TTL.
+     *
+     * @param key Key to set value for
+     * @param value New value for the key
+     * @param ttl Key will expire after these many seconds
+     * @throws EtcdException in case of an error
+     */
+    void set(String key, String value, int ttl) throws EtcdException;
+
+    /**
      * Delete value for the given key.
      *
      * @param key Key to delete value for
