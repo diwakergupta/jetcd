@@ -82,13 +82,34 @@ public class EtcdClientImpl implements EtcdClient {
         ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
         try {
             for (Response response : etcd.list(path)) {
-                builder.put(response.key, response.value);
+				builder.put(response.key, response.value);
             }
         } catch (RetrofitError e) {
             throw new EtcdException(e);
         }
         return builder.build();
     }
+
+	@Override
+	public Map<String, Object>deepList(String path) throws EtcdException {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(path));
+		ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+		try {
+			for (Response response : etcd.list(path)) {
+				String[] parts = response.key.split("/");
+				Preconditions.checkState(parts.length > 0);
+				String shortName = parts[parts.length - 1];
+				if (response.dir != null) {
+					builder.put(shortName, deepList(response.key));
+				} else {
+					builder.put(shortName, response.value);
+				}
+			}
+		} catch (RetrofitError e) {
+			throw new EtcdException(e);
+		}
+		return builder.build();
+	}
 
     @Override
     public String testAndSet(String key, String oldValue, String newValue)

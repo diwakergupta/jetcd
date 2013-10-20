@@ -64,6 +64,19 @@ public interface EtcdClient {
      */
     Map<String, String> list(String path) throws EtcdException;
 
+	/**
+	 * List directory and all child directories at given path.
+	 *
+	 * <p>Unlike {@link #list(String)}, this recursively iterates
+	 * through directory children, building nested maps for any
+	 * sub-directories it finds.</p>
+	 *
+	 * @param path Given path
+	 * @return Map of key,values pairs under the path
+	 * @throws EtcdException
+	 */
+	Map<String, Object> deepList(String path) throws EtcdException;
+
     /**
      * Test the value at a given key and update to newValue if the oldValue
      * matches.
