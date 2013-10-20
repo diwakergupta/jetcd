@@ -100,7 +100,7 @@ public class EtcdClientTest {
         client.set("b/bar", "baz");
         client.set("b/foo", "baz");
 
-		Map<String, String> l = client.list("b");
+        Map<String, String> l = client.list("b");
         assertThat(client.list("b")).hasSize(2)
             .containsEntry("/b/bar", "baz").containsEntry("/b/foo", "baz");
     }
@@ -119,26 +119,26 @@ public class EtcdClientTest {
         }
     }
 
-	@Test
-	public void testDeepList() throws EtcdException {
-		String rnd = UUID.randomUUID().toString();
-		client.set(rnd + "/foo/key0", "val0");
-		client.set(rnd + "/foo/key1", "val1");
-		client.set(rnd + "/something", "else");
+    @Test
+    public void testDeepList() throws EtcdException {
+        String rnd = UUID.randomUUID().toString();
+        client.set(rnd + "/foo/key0", "val0");
+        client.set(rnd + "/foo/key1", "val1");
+        client.set(rnd + "/something", "else");
 
-		Map<String, Object> l = client.deepList(rnd);
+        Map<String, Object> l = client.deepList(rnd);
 
-		assertThat(l)
-				.hasSize(2)
-				.containsKey("foo")
-				.containsEntry("something", "else");
+        assertThat(l)
+                .hasSize(2)
+                .containsKey("foo")
+                .containsEntry("something", "else");
 
-		Object nested = l.get("foo");
-		assertThat(nested).isInstanceOf(Map.class);
+        Object nested = l.get("foo");
+        assertThat(nested).isInstanceOf(Map.class);
 
-		Map<String, Object> foo = (Map<String, Object>) nested;
-		assertThat(foo).hasSize(2)
-				.containsEntry("key0", "val0")
-				.containsEntry("key1", "val1");
-	}
+        Map<String, Object> foo = (Map<String, Object>) nested;
+        assertThat(foo).hasSize(2)
+                .containsEntry("key0", "val0")
+                .containsEntry("key1", "val1");
+    }
 }
