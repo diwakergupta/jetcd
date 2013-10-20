@@ -17,6 +17,7 @@
 package jetcd;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -35,7 +36,7 @@ public class EtcdClientImpl implements EtcdClient {
 
     @Override
     public String get(String key) throws EtcdException {
-        Preconditions.checkNotNull(key);
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
         try {
             return etcd.get(key).value;
         } catch (RetrofitError e) {
@@ -45,8 +46,8 @@ public class EtcdClientImpl implements EtcdClient {
 
     @Override
     public void set(String key, String value) throws EtcdException {
-        Preconditions.checkNotNull(key);
-        Preconditions.checkNotNull(value);
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(value));
         try {
             etcd.set(key, value, /*ttl=*/ null);
         } catch (RetrofitError e) {
@@ -56,8 +57,8 @@ public class EtcdClientImpl implements EtcdClient {
 
     @Override
     public void set(String key, String value, int ttl) throws EtcdException {
-        Preconditions.checkNotNull(key);
-        Preconditions.checkNotNull(value);
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(value));
         try {
             etcd.set(key, value, ttl);
         } catch (RetrofitError e) {
@@ -67,7 +68,7 @@ public class EtcdClientImpl implements EtcdClient {
 
     @Override
     public void delete(String key) throws EtcdException {
-        Preconditions.checkNotNull(key);
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
         try {
             etcd.delete(key);
         } catch (RetrofitError e) {
@@ -77,7 +78,7 @@ public class EtcdClientImpl implements EtcdClient {
 
     @Override
     public Map<String, String> list(String path) throws EtcdException {
-        Preconditions.checkNotNull(path);
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(path));
         ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
         try {
             for (Response response : etcd.list(path)) {
@@ -90,11 +91,32 @@ public class EtcdClientImpl implements EtcdClient {
     }
 
     @Override
+    public Map<String, Object> deepList(String path) throws EtcdException {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(path));
+        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+        try {
+            for (Response response : etcd.list(path)) {
+                String[] parts = response.key.split("/");
+                Preconditions.checkState(parts.length > 0);
+                String shortName = parts[parts.length - 1];
+                if (response.dir != null) {
+                    builder.put(shortName, deepList(response.key));
+                } else {
+                    builder.put(shortName, response.value);
+                }
+            }
+        } catch (RetrofitError e) {
+            throw new EtcdException(e);
+        }
+        return builder.build();
+    }
+
+    @Override
     public String testAndSet(String key, String oldValue, String newValue)
             throws EtcdException {
-        Preconditions.checkNotNull(key);
-        Preconditions.checkNotNull(oldValue);
-        Preconditions.checkNotNull(newValue);
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(oldValue));
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(newValue));
         Preconditions.checkArgument(!oldValue.equals(newValue));
         try {
             Response response = etcd.testAndSet(key, oldValue, newValue);

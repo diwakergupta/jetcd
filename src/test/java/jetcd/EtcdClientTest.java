@@ -19,6 +19,9 @@ package jetcd;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Map;
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
@@ -96,6 +99,8 @@ public class EtcdClientTest {
     public void testList() throws EtcdException {
         client.set("b/bar", "baz");
         client.set("b/foo", "baz");
+
+        Map<String, String> l = client.list("b");
         assertThat(client.list("b")).hasSize(2)
             .containsEntry("/b/bar", "baz").containsEntry("/b/foo", "baz");
     }
@@ -112,5 +117,28 @@ public class EtcdClientTest {
         } catch (EtcdException e) {
             assertThat(e.getErrorCode()).isEqualTo(101);
         }
+    }
+
+    @Test
+    public void testDeepList() throws EtcdException {
+        String rnd = UUID.randomUUID().toString();
+        client.set(rnd + "/foo/key0", "val0");
+        client.set(rnd + "/foo/key1", "val1");
+        client.set(rnd + "/something", "else");
+
+        Map<String, Object> l = client.deepList(rnd);
+
+        assertThat(l)
+                .hasSize(2)
+                .containsKey("foo")
+                .containsEntry("something", "else");
+
+        Object nested = l.get("foo");
+        assertThat(nested).isInstanceOf(Map.class);
+
+        Map<String, Object> foo = (Map<String, Object>) nested;
+        assertThat(foo).hasSize(2)
+                .containsEntry("key0", "val0")
+                .containsEntry("key1", "val1");
     }
 }
