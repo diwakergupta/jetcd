@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
-public class EtcdClientTest {
+public class EtcdClientV2Test {
     private final EtcdClient client = EtcdClientFactory.newInstance();
     private boolean localEtcdAvailable = true;
 
@@ -52,6 +52,7 @@ public class EtcdClientTest {
     @Test
     public void testSet() throws EtcdException {
         client.set("newKey", "newValue");
+        String g = client.get("newKey");
         assertThat(client.get("newKey")).isEqualTo("newValue");
 
         // Set a pre-existing key
@@ -97,7 +98,7 @@ public class EtcdClientTest {
         client.set("b/bar", "baz");
         client.set("b/foo", "baz");
         assertThat(client.list("b")).hasSize(2)
-            .containsEntry("/b/bar", "baz").containsEntry("/b/foo", "baz");
+                .containsEntry("/b/bar", "baz").containsEntry("/b/foo", "baz");
     }
 
     @Test

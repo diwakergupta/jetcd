@@ -26,6 +26,6 @@ public class EtcdClientFactory {
     }
 
     public static EtcdClient newInstance(final String server) {
-        return new EtcdClientImpl(server);
+        return new EtcdClientImplV2(server);
     }
 }
