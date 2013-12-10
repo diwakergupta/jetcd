@@ -24,7 +24,8 @@ import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
 public class EtcdClientV2Test {
-    private final EtcdClient client = EtcdClientFactory.newInstance();
+    private final String endpoint = "http://localhost:4001";
+    private final EtcdClient client = EtcdClientFactory.newInstance(endpoint, EtcdClientFactory.APILevel.V2);
     private boolean localEtcdAvailable = true;
 
     @Before

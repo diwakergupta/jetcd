@@ -17,6 +17,17 @@
 package jetcd;
 
 public class EtcdClientFactory {
+
+    public enum APILevel {
+        V1(1), V2(2);
+
+        private final int version;
+
+        private APILevel(int version) {
+            this.version = version;
+        }
+    }
+
     private EtcdClientFactory() {
         // Factory
     }
@@ -26,6 +37,14 @@ public class EtcdClientFactory {
     }
 
     public static EtcdClient newInstance(final String server) {
-        return new EtcdClientImplV2(server);
+        return new EtcdClientImpl(server);
+    }
+
+    public static EtcdClient newInstance(final String server, APILevel api) {
+        if (api == APILevel.V1) {
+            return new EtcdClientImpl(server);
+        } else {
+            return new EtcdClientImplV2(server);
+        }
     }
 }
