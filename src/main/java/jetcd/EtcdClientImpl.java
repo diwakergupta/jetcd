@@ -19,9 +19,24 @@ package jetcd;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.client.ApacheClient;
+import retrofit.client.Client;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.*;
+import java.security.cert.*;
+import java.security.cert.Certificate;
 import java.util.Map;
 
 public class EtcdClientImpl implements EtcdClient {
@@ -33,6 +48,16 @@ public class EtcdClientImpl implements EtcdClient {
                 .build();
         etcd = restAdapter.create(EtcdApi.class);
     }
+
+    EtcdClientImpl(final String server,
+                   Client client) {
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setServer(server)
+                .setClient(client)
+                .build();
+        etcd = restAdapter.create(EtcdApi.class);
+    }
+
 
     @Override
     public String get(String key) throws EtcdException {

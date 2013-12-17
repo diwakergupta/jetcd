@@ -16,7 +16,11 @@
 
 package jetcd;
 
+import jetcd.trusted.Credentials;
+import jetcd.trusted.TrustedApacheClient;
+
 public class EtcdClientFactory {
+
     private EtcdClientFactory() {
         // Factory
     }
@@ -28,4 +32,21 @@ public class EtcdClientFactory {
     public static EtcdClient newInstance(final String server) {
         return new EtcdClientImpl(server);
     }
+
+    public static EtcdClient newTrustedInstance(final String server,
+                                                final byte[] caCert,
+                                                final byte[] clientKey,
+                                                final byte[] clientCert) {
+        Credentials credentials =
+                new Credentials(caCert, clientKey, clientCert);
+        TrustedApacheClient client = new TrustedApacheClient(credentials);
+        return new EtcdClientImpl(server, client);
+    }
+
+    public static EtcdClient newTrustedInstance(final String server,
+                                                final Credentials credentials) {
+        TrustedApacheClient client = new TrustedApacheClient(credentials);
+        return new EtcdClientImpl(server, client);
+    }
+
 }

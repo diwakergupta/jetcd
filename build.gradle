@@ -24,6 +24,9 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.5'
     compile 'com.squareup.retrofit:retrofit:1.2.2'
     compile 'com.google.guava:guava:15.0'
+    compile 'org.apache.httpcomponents:httpclient:4.0.1'
+    compile 'org.bouncycastle:bcprov-jdk16:1.46'
+    compile 'commons-io:commons-io:2.4'
 
     testCompile 'junit:junit:4.11'
     testCompile 'org.assertj:assertj-core:1.4.0'
