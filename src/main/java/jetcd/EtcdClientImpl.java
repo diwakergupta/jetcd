@@ -16,43 +16,44 @@
 
 package jetcd;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import retrofit.ErrorHandler;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.converter.JacksonConverter;
 
 import java.util.Map;
 
 public class EtcdClientImpl implements EtcdClient {
+    private static final ObjectMapper objectMapper = new ObjectMapper()
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private final EtcdApi etcd;
 
     EtcdClientImpl(final String server) {
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setServer(server)
-                .build();
+            .setLogLevel(RestAdapter.LogLevel.FULL)
+            .setConverter(new JacksonConverter(objectMapper))
+            .setServer(server)
+            .setErrorHandler(new EtcdErrorHandler())
+            .build();
         etcd = restAdapter.create(EtcdApi.class);
     }
 
     @Override
     public String get(String key) throws EtcdException {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
-        try {
-            return etcd.get(key).value;
-        } catch (RetrofitError e) {
-            throw new EtcdException(e);
-        }
+        return etcd.get(key).getNode().getValue();
     }
 
     @Override
     public void set(String key, String value) throws EtcdException {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
         Preconditions.checkArgument(!Strings.isNullOrEmpty(value));
-        try {
-            etcd.set(key, value, /*ttl=*/ null);
-        } catch (RetrofitError e) {
-            throw new EtcdException(e);
-        }
+        etcd.set(key, value, null, null, null);
     }
 
     @Override
@@ -60,53 +61,40 @@ public class EtcdClientImpl implements EtcdClient {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
         Preconditions.checkArgument(!Strings.isNullOrEmpty(value));
         Preconditions.checkArgument(ttl > 0);
-
-        try {
-            etcd.set(key, value, ttl);
-        } catch (RetrofitError e) {
-            throw new EtcdException(e);
-        }
+        etcd.set(key, value, ttl, null, null);
     }
 
     @Override
     public void delete(String key) throws EtcdException {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
-
-        try {
-            etcd.delete(key);
-        } catch (RetrofitError e) {
-            throw new EtcdException(e);
-        }
+        etcd.delete(key);
     }
 
     @Override
     public Map<String, String> list(String path) throws EtcdException {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(path));
-
         ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-        try {
-            for (Response response : etcd.list(path)) {
-                builder.put(response.key, response.value);
-            }
-        } catch (RetrofitError e) {
-            throw new EtcdException(e);
+        for (EtcdResponse.Node node : etcd.get(path).getNode().getNodes()) {
+            builder.put(node.getKey(), node.getValue());
         }
         return builder.build();
     }
 
     @Override
-    public String testAndSet(String key, String oldValue, String newValue)
-            throws EtcdException {
+    public void compareAndSwap(String key, String oldValue, String newValue) throws EtcdException {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
         Preconditions.checkArgument(!Strings.isNullOrEmpty(oldValue));
         Preconditions.checkArgument(!Strings.isNullOrEmpty(newValue));
         Preconditions.checkArgument(!oldValue.equals(newValue));
 
-        try {
-            Response response = etcd.testAndSet(key, oldValue, newValue);
-            return response.prevValue;
-        } catch (RetrofitError e) {
-            throw new EtcdException(e);
+        EtcdResponse response = etcd.set(key, newValue, null, null, oldValue);
+        response.getNode().getValue();
+    }
+
+    private static final class EtcdErrorHandler implements ErrorHandler {
+        @Override
+        public Throwable handleError(final RetrofitError cause) {
+            return (EtcdException) cause.getBodyAs(EtcdException.class);
         }
     }
 }

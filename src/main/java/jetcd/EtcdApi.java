@@ -20,28 +20,22 @@ import retrofit.http.DELETE;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
-import retrofit.http.POST;
+import retrofit.http.PUT;
 import retrofit.http.Path;
-
-import java.util.List;
+import retrofit.http.Query;
 
 public interface EtcdApi {
-    @GET("/v1/keys/{key}")
-    Response get(@Path("key") String key);
-
     @FormUrlEncoded
-    @POST("/v1/keys/{key}")
-    Response set(@Path("key") String key, @Field("value") String value,
-        @Field("ttl") Integer ttl);
+    @PUT("/v2/keys/{key}")
+    EtcdResponse set(@Path("key") String key,
+                     @Field("value") String value,
+                     @Field("ttl") Integer ttl,
+                     @Field("dir") Boolean dir,
+                     @Query("prevValue") String prevValue) throws EtcdException;
 
-    @DELETE("/v1/keys/{key}")
-    Response delete(@Path("key") String key);
+    @GET("/v2/keys/{key}")
+    EtcdResponse get(@Path("key") String key) throws EtcdException;
 
-    @GET("/v1/keys/{key}/")
-    List<Response> list(@Path("key") String key);
-
-    @FormUrlEncoded
-    @POST("/v1/keys/{key}")
-    Response testAndSet(@Path("key") String key,
-        @Field("prevValue") String prevValue, @Field("value") String value);
+    @DELETE("/v2/keys/{key}")
+    EtcdResponse delete(@Path("key") String key) throws EtcdException;
 }
