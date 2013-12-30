@@ -16,25 +16,39 @@
 
 package jetcd;
 
-import retrofit.RetrofitError;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class EtcdException extends Exception {
-    private final EtcdError etcdError;
+public final class EtcdException extends Exception {
+    private final int errorCode;
+    private final String cause;
+    private final String message;
+    private final long index;
 
-    private static final class EtcdError {
-        int errorCode;
-        String message;
-        String cause = null;
-
-        EtcdError() { }
-    }
-
-    public EtcdException(RetrofitError error) {
-        super(error.getResponse().getReason());
-        etcdError = (EtcdError) error.getBodyAs(EtcdError.class);
+    public EtcdException(@JsonProperty("errorCode") int errorCode,
+                         @JsonProperty("cause") String cause,
+                         @JsonProperty("message") String message,
+                         @JsonProperty("index") long index) {
+        this.errorCode = errorCode;
+        this.cause = cause;
+        this.message = message;
+        this.index = index;
     }
 
     public int getErrorCode() {
-        return etcdError.errorCode;
+        return errorCode;
+    }
+
+    @Override
+    public String toString() {
+        return cause;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+    public long getIndex() {
+        return index;
     }
 }

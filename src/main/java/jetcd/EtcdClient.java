@@ -65,15 +65,14 @@ public interface EtcdClient {
     Map<String, String> list(String path) throws EtcdException;
 
     /**
-     * Test the value at a given key and update to newValue if the oldValue
+     * Compare the value at a given key and swap with newValue if the oldValue
      * matches.
      *
      * @param key Key to test/set value at
      * @param oldValue Old value
      * @param newValue New value
-     * @return The previous value
      * @throws EtcdException in case of an error
      */
-    String testAndSet(String key, String oldValue, String newValue)
+    void compareAndSwap(String key, String oldValue, String newValue)
         throws EtcdException;
 }

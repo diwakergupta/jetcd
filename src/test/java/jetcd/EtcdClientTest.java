@@ -65,7 +65,7 @@ public class EtcdClientTest {
         assertThat(client.get("newKey")).isEqualTo("newValue");
 
         // Wait for key to expire
-        Thread.sleep(1200);
+        Thread.sleep(1500);
         try {
             client.get("newKey");
             fail();
@@ -101,13 +101,12 @@ public class EtcdClientTest {
     }
 
     @Test
-    public void testGetAndSet() throws EtcdException {
-        String oldValue = client.testAndSet("hello", "world", "new value");
-        assertThat(oldValue).isEqualTo("world");
+    public void testCompareAndSwap() throws EtcdException {
+        client.compareAndSwap("hello", "world", "new value");
         assertThat(client.get("hello")).isEqualTo("new value");
 
         try {
-            client.testAndSet("hello", "bad old", "world");
+            client.compareAndSwap("hello", "bad old", "world");
             fail();
         } catch (EtcdException e) {
             assertThat(e.getErrorCode()).isEqualTo(101);
