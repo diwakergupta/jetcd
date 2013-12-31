@@ -1,2 +1,8 @@
 language: java
-
+install:
+    - git clone https://github.com/coreos/etcd
+    - pushd etcd && ./build && popd
+before_script:
+    - etcd/etcd &
+after_script:
+    - pkill -f etcd
