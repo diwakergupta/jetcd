@@ -35,7 +35,6 @@ public class EtcdClientImpl implements EtcdClient {
 
     EtcdClientImpl(final String server) {
         RestAdapter restAdapter = new RestAdapter.Builder()
-            .setLogLevel(RestAdapter.LogLevel.FULL)
             .setConverter(new JacksonConverter(objectMapper))
             .setServer(server)
             .setErrorHandler(new EtcdErrorHandler())
