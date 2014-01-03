@@ -21,11 +21,9 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
 
 public class EtcdClientTest {
     private final EtcdClient client = EtcdClientFactory.newInstance();
-    private boolean localEtcdAvailable = true;
 
     @Before
     public void setUp() throws EtcdException {
@@ -33,9 +31,8 @@ public class EtcdClientTest {
         try {
             client.set("hello", "world");
         } catch (Exception e) {
-            localEtcdAvailable = false;
+            fail();
         }
-        assumeTrue(localEtcdAvailable);
     }
 
     @Test
