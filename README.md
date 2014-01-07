@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/diwakergupta/jetcd.png?label=ready)](https://waffle.io/diwakergupta/jetcd)
 jetcd: A Java client for etcd
 =============================
 
