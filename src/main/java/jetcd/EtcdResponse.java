@@ -41,7 +41,6 @@ public final class EtcdResponse {
     static final class Node {
         private final String key;
         private final String value;
-        private final String prevValue;
         private final long createdIndex;
         private final long modifiedIndex;
         private final long ttl;
@@ -49,14 +48,12 @@ public final class EtcdResponse {
 
         Node(@JsonProperty("key") String key,
              @JsonProperty("value") String value,
-             @JsonProperty("prevValue") String prevValue,
              @JsonProperty("createdIndex") long createdIndex,
              @JsonProperty("modifiedIndex") long modifiedIndex,
              @JsonProperty("ttl") long ttl,
              @JsonProperty("nodes") List<Node> nodes) {
             this.key = key;
             this.value = value;
-            this.prevValue = prevValue;
             this.createdIndex = createdIndex;
             this.modifiedIndex = modifiedIndex;
             this.ttl = ttl;
@@ -65,10 +62,6 @@ public final class EtcdResponse {
 
         public String getKey() {
             return key;
-        }
-
-        public String getPrevValue() {
-            return prevValue;
         }
 
         public long getCreatedIndex() {
