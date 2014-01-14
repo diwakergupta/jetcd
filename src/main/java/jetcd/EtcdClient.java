@@ -18,6 +18,7 @@ package jetcd;
 
 import java.util.Map;
 
+/** The Etcd client API. */
 public interface EtcdClient {
   /**
    * Retrieve the value of the given key, if set.

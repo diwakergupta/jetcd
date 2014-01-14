@@ -16,13 +16,13 @@
 
 package jetcd;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
-
-public class EtcdClientTest {
+/** Tests for EtcdClient. */
+public final class EtcdClientTest {
   private final EtcdClient client = EtcdClientFactory.newInstance();
 
   @Before

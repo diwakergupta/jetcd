@@ -16,7 +16,8 @@
 
 package jetcd;
 
-public class EtcdClientFactory {
+/** Factory for Etcd clients. */
+public final class EtcdClientFactory {
   private EtcdClientFactory() {
     // Factory
   }

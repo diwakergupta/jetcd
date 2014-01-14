@@ -24,7 +24,7 @@ import retrofit.http.PUT;
 import retrofit.http.Path;
 import retrofit.http.Query;
 
-public interface EtcdApi {
+interface EtcdApi {
   @FormUrlEncoded
   @PUT("/v2/keys/{key}")
   EtcdResponse set(@Path("key") String key,

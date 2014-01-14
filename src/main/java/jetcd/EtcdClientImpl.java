@@ -16,19 +16,20 @@
 
 package jetcd;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+
 import retrofit.ErrorHandler;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.converter.JacksonConverter;
 
-import java.util.Map;
-
-public class EtcdClientImpl implements EtcdClient {
+final class EtcdClientImpl implements EtcdClient {
   private static final ObjectMapper objectMapper = new ObjectMapper()
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   private final EtcdApi etcd;
@@ -43,20 +44,21 @@ public class EtcdClientImpl implements EtcdClient {
   }
 
   @Override
-  public String get(String key) throws EtcdException {
+  public String get(final String key) throws EtcdException {
     Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
     return etcd.get(key).getNode().getValue();
   }
 
   @Override
-  public void set(String key, String value) throws EtcdException {
+  public void set(final String key, final String value) throws EtcdException {
     Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
     Preconditions.checkArgument(!Strings.isNullOrEmpty(value));
     etcd.set(key, value, null, null, null);
   }
 
   @Override
-  public void set(String key, String value, int ttl) throws EtcdException {
+  public void set(final String key, final String value, final int ttl)
+      throws EtcdException {
     Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
     Preconditions.checkArgument(!Strings.isNullOrEmpty(value));
     Preconditions.checkArgument(ttl > 0);
@@ -64,13 +66,13 @@ public class EtcdClientImpl implements EtcdClient {
   }
 
   @Override
-  public void delete(String key) throws EtcdException {
+  public void delete(final String key) throws EtcdException {
     Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
     etcd.delete(key);
   }
 
   @Override
-  public Map<String, String> list(String path) throws EtcdException {
+  public Map<String, String> list(final String path) throws EtcdException {
     Preconditions.checkArgument(!Strings.isNullOrEmpty(path));
     ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
     for (EtcdResponse.Node node : etcd.get(path).getNode().getNodes()) {
@@ -80,7 +82,8 @@ public class EtcdClientImpl implements EtcdClient {
   }
 
   @Override
-  public void compareAndSwap(String key, String oldValue, String newValue) throws EtcdException {
+  public void compareAndSwap(final String key, final String oldValue,
+                             final String newValue) throws EtcdException {
     Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
     Preconditions.checkArgument(!Strings.isNullOrEmpty(oldValue));
     Preconditions.checkArgument(!Strings.isNullOrEmpty(newValue));

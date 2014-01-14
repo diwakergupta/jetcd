@@ -18,16 +18,17 @@ package jetcd;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/** An Etcd Exception. */
 public final class EtcdException extends Exception {
   private final int errorCode;
   private final String cause;
   private final String message;
   private final long index;
 
-  public EtcdException(@JsonProperty("errorCode") int errorCode,
-             @JsonProperty("cause") String cause,
-             @JsonProperty("message") String message,
-             @JsonProperty("index") long index) {
+  public EtcdException(@JsonProperty("errorCode") final int errorCode,
+             @JsonProperty("cause") final String cause,
+             @JsonProperty("message") final String message,
+             @JsonProperty("index") final long index) {
     this.errorCode = errorCode;
     this.cause = cause;
     this.message = message;

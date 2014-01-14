@@ -16,16 +16,17 @@
 
 package jetcd;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+/** An Etcd Response. */
 public final class EtcdResponse {
   private final String action;
   private final Node node;
 
-  EtcdResponse(@JsonProperty("action") String action,
-         @JsonProperty("node") Node node) {
+  EtcdResponse(@JsonProperty("action") final String action,
+               @JsonProperty("node") final Node node) {
     this.action = action;
     this.node = node;
   }
@@ -46,12 +47,12 @@ public final class EtcdResponse {
     private final long ttl;
     private final List<Node> nodes;
 
-    Node(@JsonProperty("key") String key,
-       @JsonProperty("value") String value,
-       @JsonProperty("createdIndex") long createdIndex,
-       @JsonProperty("modifiedIndex") long modifiedIndex,
-       @JsonProperty("ttl") long ttl,
-       @JsonProperty("nodes") List<Node> nodes) {
+    Node(@JsonProperty("key") final String key,
+       @JsonProperty("value") final String value,
+       @JsonProperty("createdIndex") final long createdIndex,
+       @JsonProperty("modifiedIndex") final long modifiedIndex,
+       @JsonProperty("ttl") final long ttl,
+       @JsonProperty("nodes") final List<Node> nodes) {
       this.key = key;
       this.value = value;
       this.createdIndex = createdIndex;
