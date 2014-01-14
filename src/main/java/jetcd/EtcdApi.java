@@ -25,17 +25,17 @@ import retrofit.http.Path;
 import retrofit.http.Query;
 
 public interface EtcdApi {
-    @FormUrlEncoded
-    @PUT("/v2/keys/{key}")
-    EtcdResponse set(@Path("key") String key,
-                     @Field("value") String value,
-                     @Field("ttl") Integer ttl,
-                     @Field("dir") Boolean dir,
-                     @Query("prevValue") String prevValue) throws EtcdException;
+  @FormUrlEncoded
+  @PUT("/v2/keys/{key}")
+  EtcdResponse set(@Path("key") String key,
+           @Field("value") String value,
+           @Field("ttl") Integer ttl,
+           @Field("dir") Boolean dir,
+           @Query("prevValue") String prevValue) throws EtcdException;
 
-    @GET("/v2/keys/{key}")
-    EtcdResponse get(@Path("key") String key) throws EtcdException;
+  @GET("/v2/keys/{key}")
+  EtcdResponse get(@Path("key") String key) throws EtcdException;
 
-    @DELETE("/v2/keys/{key}")
-    EtcdResponse delete(@Path("key") String key) throws EtcdException;
+  @DELETE("/v2/keys/{key}")
+  EtcdResponse delete(@Path("key") String key) throws EtcdException;
 }

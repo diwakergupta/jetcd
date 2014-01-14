@@ -17,15 +17,15 @@
 package jetcd;
 
 public class EtcdClientFactory {
-    private EtcdClientFactory() {
-        // Factory
-    }
+  private EtcdClientFactory() {
+    // Factory
+  }
 
-    public static EtcdClient newInstance() {
-        return newInstance("http://127.0.0.1:4001");
-    }
+  public static EtcdClient newInstance() {
+    return newInstance("http://127.0.0.1:4001");
+  }
 
-    public static EtcdClient newInstance(final String server) {
-        return new EtcdClientImpl(server);
-    }
+  public static EtcdClient newInstance(final String server) {
+    return new EtcdClientImpl(server);
+  }
 }

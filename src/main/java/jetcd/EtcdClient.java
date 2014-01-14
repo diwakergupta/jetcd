@@ -19,60 +19,60 @@ package jetcd;
 import java.util.Map;
 
 public interface EtcdClient {
-    /**
-     * Retrieve the value of the given key, if set.
-     *
-     * @param key Key to look up
-     * @return value Value for the given key
-     * @throws EtcdException in case of an error (e.g. key doesn't exist)
-     */
-    String get(String key) throws EtcdException;
+  /**
+   * Retrieve the value of the given key, if set.
+   *
+   * @param key Key to look up
+   * @return value Value for the given key
+   * @throws EtcdException in case of an error (e.g. key doesn't exist)
+   */
+  String get(String key) throws EtcdException;
 
-    /**
-     * Set value for the given key.
-     *
-     * @param key Key to set value for
-     * @param value New value for the key
-     * @throws EtcdException in case of an error
-     */
-    void set(String key, String value) throws EtcdException;
+  /**
+   * Set value for the given key.
+   *
+   * @param key Key to set value for
+   * @param value New value for the key
+   * @throws EtcdException in case of an error
+   */
+  void set(String key, String value) throws EtcdException;
 
-    /**
-     * Set value for the given key with given TTL.
-     *
-     * @param key Key to set value for
-     * @param value New value for the key
-     * @param ttl Key will expire after these many seconds
-     * @throws EtcdException in case of an error
-     */
-    void set(String key, String value, int ttl) throws EtcdException;
+  /**
+   * Set value for the given key with given TTL.
+   *
+   * @param key Key to set value for
+   * @param value New value for the key
+   * @param ttl Key will expire after these many seconds
+   * @throws EtcdException in case of an error
+   */
+  void set(String key, String value, int ttl) throws EtcdException;
 
-    /**
-     * Delete value for the given key.
-     *
-     * @param key Key to delete value for
-     * @throws EtcdException in case of an error
-     */
-    void delete(String key) throws EtcdException;
+  /**
+   * Delete value for the given key.
+   *
+   * @param key Key to delete value for
+   * @throws EtcdException in case of an error
+   */
+  void delete(String key) throws EtcdException;
 
-    /**
-     * List directory at given path.
-     *
-     * @param path Given path
-     * @return Map of key,value pairs under the path
-     * @throws EtcdException in case of an error
-     */
-    Map<String, String> list(String path) throws EtcdException;
+  /**
+   * List directory at given path.
+   *
+   * @param path Given path
+   * @return Map of key,value pairs under the path
+   * @throws EtcdException in case of an error
+   */
+  Map<String, String> list(String path) throws EtcdException;
 
-    /**
-     * Compare the value at a given key and swap with newValue if the oldValue
-     * matches.
-     *
-     * @param key Key to test/set value at
-     * @param oldValue Old value
-     * @param newValue New value
-     * @throws EtcdException in case of an error
-     */
-    void compareAndSwap(String key, String oldValue, String newValue)
-        throws EtcdException;
+  /**
+   * Compare the value at a given key and swap with newValue if the oldValue
+   * matches.
+   *
+   * @param key Key to test/set value at
+   * @param oldValue Old value
+   * @param newValue New value
+   * @throws EtcdException in case of an error
+   */
+  void compareAndSwap(String key, String oldValue, String newValue)
+    throws EtcdException;
 }

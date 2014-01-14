@@ -23,90 +23,90 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 public class EtcdClientTest {
-    private final EtcdClient client = EtcdClientFactory.newInstance();
+  private final EtcdClient client = EtcdClientFactory.newInstance();
 
-    @Before
-    public void setUp() throws EtcdException {
-        // Setup some keys
-        try {
-            client.set("hello", "world");
-        } catch (Exception e) {
-            fail();
-        }
+  @Before
+  public void setUp() throws EtcdException {
+    // Setup some keys
+    try {
+      client.set("hello", "world");
+    } catch (Exception e) {
+      fail();
+    }
+  }
+
+  @Test
+  public void testGet() throws EtcdException {
+    client.get("hello");
+    try {
+      client.get("non-existent");
+      fail();
+    } catch (EtcdException e) {
+      assertThat(e.getErrorCode()).isEqualTo(100);
+    }
+  }
+
+  @Test
+  public void testSet() throws EtcdException {
+    client.set("newKey", "newValue");
+    assertThat(client.get("newKey")).isEqualTo("newValue");
+
+    // Set a pre-existing key
+    client.set("hello", "newValue");
+    assertThat(client.get("hello")).isEqualTo("newValue");
+  }
+
+  @Test
+  public void testSetWithTtl() throws Exception {
+    client.set("newKey", "newValue", 1);
+    assertThat(client.get("newKey")).isEqualTo("newValue");
+
+    // Wait for key to expire
+    Thread.sleep(1500);
+    try {
+      client.get("newKey");
+      fail();
+    } catch (EtcdException e) {
+      assertThat(e.getErrorCode()).isEqualTo(100);
+    }
+  }
+
+  @Test
+  public void testDelete() throws EtcdException {
+    client.delete("hello");
+    try {
+      client.get("hello");
+      fail();
+    } catch (EtcdException e) {
+      assertThat(e.getErrorCode()).isEqualTo(100);
     }
 
-    @Test
-    public void testGet() throws EtcdException {
-        client.get("hello");
-        try {
-            client.get("non-existent");
-            fail();
-        } catch (EtcdException e) {
-            assertThat(e.getErrorCode()).isEqualTo(100);
-        }
+    try {
+      client.delete("non-existent");
+      fail();
+    } catch (EtcdException e) {
+      assertThat(e.getErrorCode()).isEqualTo(100);
     }
+  }
 
-    @Test
-    public void testSet() throws EtcdException {
-        client.set("newKey", "newValue");
-        assertThat(client.get("newKey")).isEqualTo("newValue");
+  @Test
+  public void testList() throws EtcdException {
+    client.set("b/bar", "baz");
+    client.set("b/foo", "baz");
+    assertThat(client.list("b")).hasSize(2)
+      .containsEntry("/b/bar", "baz").containsEntry("/b/foo", "baz");
+  }
 
-        // Set a pre-existing key
-        client.set("hello", "newValue");
-        assertThat(client.get("hello")).isEqualTo("newValue");
+  @Test
+  public void testCompareAndSwap() throws EtcdException {
+    client.compareAndSwap("hello", "world", "new value");
+    assertThat(client.get("hello")).isEqualTo("new value");
+
+    try {
+      client.compareAndSwap("hello", "bad old", "world");
+      fail();
+    } catch (EtcdException e) {
+      assertThat(e.getErrorCode()).isEqualTo(101);
     }
-
-    @Test
-    public void testSetWithTtl() throws Exception {
-        client.set("newKey", "newValue", 1);
-        assertThat(client.get("newKey")).isEqualTo("newValue");
-
-        // Wait for key to expire
-        Thread.sleep(1500);
-        try {
-            client.get("newKey");
-            fail();
-        } catch (EtcdException e) {
-            assertThat(e.getErrorCode()).isEqualTo(100);
-        }
-    }
-
-    @Test
-    public void testDelete() throws EtcdException {
-        client.delete("hello");
-        try {
-            client.get("hello");
-            fail();
-        } catch (EtcdException e) {
-            assertThat(e.getErrorCode()).isEqualTo(100);
-        }
-
-        try {
-            client.delete("non-existent");
-            fail();
-        } catch (EtcdException e) {
-            assertThat(e.getErrorCode()).isEqualTo(100);
-        }
-    }
-
-    @Test
-    public void testList() throws EtcdException {
-        client.set("b/bar", "baz");
-        client.set("b/foo", "baz");
-        assertThat(client.list("b")).hasSize(2)
-            .containsEntry("/b/bar", "baz").containsEntry("/b/foo", "baz");
-    }
-
-    @Test
-    public void testCompareAndSwap() throws EtcdException {
-        client.compareAndSwap("hello", "world", "new value");
-        assertThat(client.get("hello")).isEqualTo("new value");
-
-        try {
-            client.compareAndSwap("hello", "bad old", "world");
-            fail();
-        } catch (EtcdException e) {
-            assertThat(e.getErrorCode()).isEqualTo(101);
-        }
-    }
+  }
 }

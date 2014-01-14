@@ -29,71 +29,71 @@ import retrofit.converter.JacksonConverter;
 import java.util.Map;
 
 public class EtcdClientImpl implements EtcdClient {
-    private static final ObjectMapper objectMapper = new ObjectMapper()
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    private final EtcdApi etcd;
+  private static final ObjectMapper objectMapper = new ObjectMapper()
+    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  private final EtcdApi etcd;
 
-    EtcdClientImpl(final String server) {
-        RestAdapter restAdapter = new RestAdapter.Builder()
-            .setConverter(new JacksonConverter(objectMapper))
-            .setServer(server)
-            .setErrorHandler(new EtcdErrorHandler())
-            .build();
-        etcd = restAdapter.create(EtcdApi.class);
+  EtcdClientImpl(final String server) {
+    RestAdapter restAdapter = new RestAdapter.Builder()
+      .setConverter(new JacksonConverter(objectMapper))
+      .setServer(server)
+      .setErrorHandler(new EtcdErrorHandler())
+      .build();
+    etcd = restAdapter.create(EtcdApi.class);
+  }
+
+  @Override
+  public String get(String key) throws EtcdException {
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
+    return etcd.get(key).getNode().getValue();
+  }
+
+  @Override
+  public void set(String key, String value) throws EtcdException {
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(value));
+    etcd.set(key, value, null, null, null);
+  }
+
+  @Override
+  public void set(String key, String value, int ttl) throws EtcdException {
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(value));
+    Preconditions.checkArgument(ttl > 0);
+    etcd.set(key, value, ttl, null, null);
+  }
+
+  @Override
+  public void delete(String key) throws EtcdException {
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
+    etcd.delete(key);
+  }
+
+  @Override
+  public Map<String, String> list(String path) throws EtcdException {
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(path));
+    ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+    for (EtcdResponse.Node node : etcd.get(path).getNode().getNodes()) {
+      builder.put(node.getKey(), node.getValue());
     }
+    return builder.build();
+  }
 
+  @Override
+  public void compareAndSwap(String key, String oldValue, String newValue) throws EtcdException {
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(oldValue));
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(newValue));
+    Preconditions.checkArgument(!oldValue.equals(newValue));
+
+    EtcdResponse response = etcd.set(key, newValue, null, null, oldValue);
+    response.getNode().getValue();
+  }
+
+  private static final class EtcdErrorHandler implements ErrorHandler {
     @Override
-    public String get(String key) throws EtcdException {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
-        return etcd.get(key).getNode().getValue();
+    public Throwable handleError(final RetrofitError cause) {
+      return (EtcdException) cause.getBodyAs(EtcdException.class);
     }
-
-    @Override
-    public void set(String key, String value) throws EtcdException {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(value));
-        etcd.set(key, value, null, null, null);
-    }
-
-    @Override
-    public void set(String key, String value, int ttl) throws EtcdException {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(value));
-        Preconditions.checkArgument(ttl > 0);
-        etcd.set(key, value, ttl, null, null);
-    }
-
-    @Override
-    public void delete(String key) throws EtcdException {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
-        etcd.delete(key);
-    }
-
-    @Override
-    public Map<String, String> list(String path) throws EtcdException {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(path));
-        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-        for (EtcdResponse.Node node : etcd.get(path).getNode().getNodes()) {
-            builder.put(node.getKey(), node.getValue());
-        }
-        return builder.build();
-    }
-
-    @Override
-    public void compareAndSwap(String key, String oldValue, String newValue) throws EtcdException {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(key));
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(oldValue));
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(newValue));
-        Preconditions.checkArgument(!oldValue.equals(newValue));
-
-        EtcdResponse response = etcd.set(key, newValue, null, null, oldValue);
-        response.getNode().getValue();
-    }
-
-    private static final class EtcdErrorHandler implements ErrorHandler {
-        @Override
-        public Throwable handleError(final RetrofitError cause) {
-            return (EtcdException) cause.getBodyAs(EtcdException.class);
-        }
-    }
+  }
 }

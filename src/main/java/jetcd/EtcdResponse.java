@@ -21,67 +21,67 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public final class EtcdResponse {
-    private final String action;
-    private final Node node;
+  private final String action;
+  private final Node node;
 
-    EtcdResponse(@JsonProperty("action") String action,
-                 @JsonProperty("node") Node node) {
-        this.action = action;
-        this.node = node;
+  EtcdResponse(@JsonProperty("action") String action,
+         @JsonProperty("node") Node node) {
+    this.action = action;
+    this.node = node;
+  }
+
+  public String getAction() {
+    return action;
+  }
+
+  public Node getNode() {
+    return node;
+  }
+
+  static final class Node {
+    private final String key;
+    private final String value;
+    private final long createdIndex;
+    private final long modifiedIndex;
+    private final long ttl;
+    private final List<Node> nodes;
+
+    Node(@JsonProperty("key") String key,
+       @JsonProperty("value") String value,
+       @JsonProperty("createdIndex") long createdIndex,
+       @JsonProperty("modifiedIndex") long modifiedIndex,
+       @JsonProperty("ttl") long ttl,
+       @JsonProperty("nodes") List<Node> nodes) {
+      this.key = key;
+      this.value = value;
+      this.createdIndex = createdIndex;
+      this.modifiedIndex = modifiedIndex;
+      this.ttl = ttl;
+      this.nodes = nodes;
     }
 
-    public String getAction() {
-        return action;
+    public String getKey() {
+      return key;
     }
 
-    public Node getNode() {
-        return node;
+    public long getCreatedIndex() {
+      return createdIndex;
     }
 
-    static final class Node {
-        private final String key;
-        private final String value;
-        private final long createdIndex;
-        private final long modifiedIndex;
-        private final long ttl;
-        private final List<Node> nodes;
-
-        Node(@JsonProperty("key") String key,
-             @JsonProperty("value") String value,
-             @JsonProperty("createdIndex") long createdIndex,
-             @JsonProperty("modifiedIndex") long modifiedIndex,
-             @JsonProperty("ttl") long ttl,
-             @JsonProperty("nodes") List<Node> nodes) {
-            this.key = key;
-            this.value = value;
-            this.createdIndex = createdIndex;
-            this.modifiedIndex = modifiedIndex;
-            this.ttl = ttl;
-            this.nodes = nodes;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public long getCreatedIndex() {
-            return createdIndex;
-        }
-
-        public long getModifiedIndex() {
-            return modifiedIndex;
-        }
-
-        public long getTtl() {
-            return ttl;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public List<Node> getNodes() {
-            return nodes;
-        }
+    public long getModifiedIndex() {
+      return modifiedIndex;
     }
+
+    public long getTtl() {
+      return ttl;
+    }
+
+    public String getValue() {
+      return value;
+    }
+
+    public List<Node> getNodes() {
+      return nodes;
+    }
+  }
 }
