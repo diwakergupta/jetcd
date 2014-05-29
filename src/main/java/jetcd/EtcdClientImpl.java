@@ -15,18 +15,19 @@
  */
 
 package jetcd;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+
 import retrofit.ErrorHandler;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.converter.JacksonConverter;
 
-import java.util.Map;
 
 final class EtcdClientImpl implements EtcdClient {
   private static final ObjectMapper objectMapper = new ObjectMapper()
