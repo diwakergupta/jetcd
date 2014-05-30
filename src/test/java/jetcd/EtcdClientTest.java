@@ -52,15 +52,15 @@ public final class EtcdClientTest {
   
   @Test
   public void testFailureWithoutEtcdServer() throws EtcdException {
-     EtcdClient nonExistingClient 
-     = EtcdClientFactory.newInstance("http://127.0.0.1:9999");
-     try {
-       nonExistingClient.get("hello");
-       fail();
-     } catch (RetrofitError e) {
-       assertThat(e.getResponse()).isNull();
-       assertThat(e.isNetworkError()).isTrue();
-     }
+    EtcdClient nonExistingClient 
+    = EtcdClientFactory.newInstance("http://127.0.0.1:9999");
+    try {
+      nonExistingClient.get("hello");
+      fail();
+    } catch (RetrofitError e) {
+      assertThat(e.getResponse()).isNull();
+      assertThat(e.isNetworkError()).isTrue();
+    }
   }
 
   @Test
