@@ -18,8 +18,12 @@ package jetcd;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import retrofit.RetrofitError;
+
 
 /** Tests for EtcdClient. */
 public final class EtcdClientTest {
@@ -43,6 +47,19 @@ public final class EtcdClientTest {
       fail();
     } catch (EtcdException e) {
       assertThat(e.getErrorCode()).isEqualTo(100);
+    }
+  }
+  
+  @Test
+  public void testFailureWithoutEtcdServer() throws EtcdException {
+    EtcdClient nonExistingClient 
+    = EtcdClientFactory.newInstance("http://127.0.0.1:9999");
+    try {
+      nonExistingClient.get("hello");
+      fail();
+    } catch (RetrofitError e) {
+      assertThat(e.getResponse()).isNull();
+      assertThat(e.isNetworkError()).isTrue();
     }
   }
 

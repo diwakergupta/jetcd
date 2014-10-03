@@ -15,7 +15,6 @@
  */
 
 package jetcd;
-
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -28,6 +27,7 @@ import retrofit.ErrorHandler;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.converter.JacksonConverter;
+
 
 final class EtcdClientImpl implements EtcdClient {
   private static final ObjectMapper objectMapper = new ObjectMapper()
@@ -96,7 +96,10 @@ final class EtcdClientImpl implements EtcdClient {
   private static final class EtcdErrorHandler implements ErrorHandler {
     @Override
     public Throwable handleError(final RetrofitError cause) {
-      return (EtcdException) cause.getBodyAs(EtcdException.class);
+        if (cause.getResponse() == null) {
+            return cause;
+        }
+        return (EtcdException) cause.getBodyAs(EtcdException.class);
     }
   }
 }
