@@ -37,7 +37,7 @@ final class EtcdClientImpl implements EtcdClient {
   EtcdClientImpl(final String server) {
     RestAdapter restAdapter = new RestAdapter.Builder()
       .setConverter(new JacksonConverter(objectMapper))
-      .setServer(server)
+      .setEndpoint(server)
       .setErrorHandler(new EtcdErrorHandler())
       .build();
     etcd = restAdapter.create(EtcdApi.class);

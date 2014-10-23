@@ -1,19 +1,10 @@
-buildscript {
-    repositories {
-        jcenter()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.6.1'
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.4'
-    }
+plugins {
+  id "com.github.ben-manes.versions" version "0.5"
+  id "com.bmuschko.nexus" version "2.0"
 }
 
 apply plugin: 'checkstyle'
 apply plugin: 'java'
-apply plugin: 'nexus'
-apply plugin: 'versions'
 
 group = 'net.floatingsun'
 version = '0.3.0-SNAPSHOT'
@@ -23,13 +14,13 @@ repositories {
 }
 
 dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.5'
-    compile 'com.squareup.retrofit:retrofit:1.4.1'
-    compile 'com.squareup.retrofit:converter-jackson:1.4.1'
-    compile 'com.google.guava:guava:16.0.1'
+    compile 'org.slf4j:slf4j-api:1.7.7'
+    compile 'com.squareup.retrofit:retrofit:1.7.0'
+    compile 'com.squareup.retrofit:converter-jackson:1.7.0'
+    compile 'com.google.guava:guava:18.0'
 
     testCompile 'junit:junit:4.11'
-    testCompile 'org.assertj:assertj-core:1.5.0'
+    testCompile 'org.assertj:assertj-core:1.7.0'
 }
 
 modifyPom {
