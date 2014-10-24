@@ -16,6 +16,7 @@
 
 package jetcd;
 
+import retrofit.client.Response;
 import retrofit.http.DELETE;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
@@ -32,6 +33,9 @@ interface EtcdApi {
            @Field("ttl") Integer ttl,
            @Field("dir") Boolean dir,
            @Query("prevValue") String prevValue) throws EtcdException;
+
+  @GET("/version")
+  Response version();
 
   @GET("/v2/keys/{key}")
   EtcdResponse get(@Path("key") String key) throws EtcdException;

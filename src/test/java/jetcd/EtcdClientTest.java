@@ -24,7 +24,6 @@ import org.junit.Test;
 
 import retrofit.RetrofitError;
 
-
 /** Tests for EtcdClient. */
 public final class EtcdClientTest {
   private final EtcdClient client = EtcdClientFactory.newInstance();
@@ -40,6 +39,11 @@ public final class EtcdClientTest {
   }
 
   @Test
+  public void testVersion() throws EtcdException {
+    assertThat(client.version()).startsWith("etcd");
+  }
+
+  @Test
   public void testGet() throws EtcdException {
     client.get("hello");
     try {
@@ -52,14 +56,14 @@ public final class EtcdClientTest {
   
   @Test
   public void testFailureWithoutEtcdServer() throws EtcdException {
-    EtcdClient nonExistingClient 
-    = EtcdClientFactory.newInstance("http://127.0.0.1:9999");
+    EtcdClient nonExistingClient = EtcdClientFactory.newInstance(
+        "http://127.0.0.1:9999");
     try {
       nonExistingClient.get("hello");
       fail();
     } catch (RetrofitError e) {
       assertThat(e.getResponse()).isNull();
-      assertThat(e.isNetworkError()).isTrue();
+      assertThat(e.getKind()).isEqualTo(RetrofitError.Kind.NETWORK);
     }
   }
 

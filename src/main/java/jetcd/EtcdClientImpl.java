@@ -15,13 +15,18 @@
  */
 
 package jetcd;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.CharStreams;
 
 import retrofit.ErrorHandler;
 import retrofit.RestAdapter;
@@ -41,6 +46,16 @@ final class EtcdClientImpl implements EtcdClient {
       .setErrorHandler(new EtcdErrorHandler())
       .build();
     etcd = restAdapter.create(EtcdApi.class);
+  }
+
+  @Override
+  public String version() throws EtcdException {
+    try (InputStreamReader reader = new InputStreamReader(
+        etcd.version().getBody().in(), Charsets.UTF_8)) {
+      return CharStreams.toString(reader);
+    } catch (IOException e) {
+      return "ERROR: " + e.getMessage();
+    }
   }
 
   @Override

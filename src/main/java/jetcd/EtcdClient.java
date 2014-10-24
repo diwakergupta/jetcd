@@ -21,6 +21,12 @@ import java.util.Map;
 /** The Etcd client API. */
 public interface EtcdClient {
   /**
+   * @return Version of the etcd instance
+   * @throws EtcdException in case of an error
+   */
+  String version() throws EtcdException;
+
+  /**
    * Retrieve the value of the given key, if set.
    *
    * @param key Key to look up
