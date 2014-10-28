@@ -16,6 +16,10 @@
 
 package jetcd;
 
+import com.google.common.base.Optional;
+
+import retrofit.client.Client;
+
 /** Factory for Etcd clients. */
 public final class EtcdClientFactory {
   private EtcdClientFactory() {
@@ -27,6 +31,11 @@ public final class EtcdClientFactory {
   }
 
   public static EtcdClient newInstance(final String server) {
-    return new EtcdClientImpl(server);
+    return new EtcdClientImpl(Optional.<Client>absent(), server);
+  }
+
+  public static EtcdClient newInstance(final Client client,
+      final String server) {
+    return new EtcdClientImpl(Optional.of(client), server);
   }
 }

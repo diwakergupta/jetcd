@@ -23,6 +23,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -31,6 +32,7 @@ import com.google.common.io.CharStreams;
 import retrofit.ErrorHandler;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.client.Client;
 import retrofit.converter.JacksonConverter;
 
 
@@ -39,13 +41,15 @@ final class EtcdClientImpl implements EtcdClient {
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   private final EtcdApi etcd;
 
-  EtcdClientImpl(final String server) {
-    RestAdapter restAdapter = new RestAdapter.Builder()
+  EtcdClientImpl(final Optional<Client> client, final String server) {
+    RestAdapter.Builder builder = new RestAdapter.Builder()
       .setConverter(new JacksonConverter(objectMapper))
       .setEndpoint(server)
-      .setErrorHandler(new EtcdErrorHandler())
-      .build();
-    etcd = restAdapter.create(EtcdApi.class);
+      .setErrorHandler(new EtcdErrorHandler());
+    if (client.isPresent()) {
+      builder.setClient(client.get());
+    }
+    etcd = builder.build().create(EtcdApi.class);
   }
 
   @Override
