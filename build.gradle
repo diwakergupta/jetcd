@@ -1,6 +1,6 @@
 plugins {
   id "com.github.ben-manes.versions" version "0.5"
-  id "com.bmuschko.nexus" version "2.0"
+  id "com.bmuschko.nexus" version "2.1.1"
 }
 
 apply plugin: 'checkstyle'
@@ -17,7 +17,7 @@ repositories {
 
 dependencies {
     compile 'org.slf4j:slf4j-api:1.7.7'
-    compile 'com.squareup.retrofit:retrofit:1.7.0'
+    compile 'com.squareup.retrofit:retrofit:1.7.1'
     compile 'com.squareup.retrofit:converter-jackson:1.7.0'
     compile 'com.google.guava:guava:18.0'
 
